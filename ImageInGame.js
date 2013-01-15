@@ -58,7 +58,8 @@ function ImageInGame()
 			sy = parseInt(a.sy) > 0 ? a.sy : 0;
 			sWidth = parseInt(a.sWidth) > 0 ? a.sWidth : 0;
 			sHeight = parseInt(a.sHeight) > 0 ? a.sHeight : 0;
-			animDirection = a.animDirection || null;
+			animDirection = (a.animDirection && (a.animDirection === 'right2left' || a.animDirection === 'top2bottom' || a.animDirection === 'bottom2top')) ? a.animDirection : 'left2right';
+			alternate = a.alternate || false;
 			animByFrame = parseInt(a.animByFrame) > 0 ? a.animByFrame : 10;
 			
 			// Creating a new image resource for this sprite
@@ -83,6 +84,8 @@ function ImageInGame()
 				sWidth : sWidth,
 				sHeight : sHeight,
 				animDirection : animDirection,
+				alternate : alternate,
+				direction : (animDirection === 'right2left' || animDirection === 'bottom2top') ? -1 : 1, // multiplier (used to compute animation direction or alternation)
 				animByFrame : animByFrame,
 				frameCount : 0
 			};
@@ -134,17 +137,41 @@ function ImageInGame()
 					if (img.frameCount >= img.animByFrame) {
 						img.frameCount = 0;
 
-						if (img.animDirection === 'horizontal') {
-							img.sx += img.sWidth;
+						if (img.animDirection === 'left2right' || img.animDirection === 'right2left') {
+							img.sx += img.sWidth * img.direction;
 
-							if (img.sx >= img.width)
-								img.sx = 0;
+							if (img.alternate) {
+								if (img.sx <= 0 || img.sx + img.sWidth >= img.width)
+									img.direction *= -1;
+							}
+							else {
+								if (img.animDirection === 'left2right') {
+									if (img.sx >= img.width)
+										img.sx = 0;
+								}
+								else if (img.animDirection === 'right2left') {
+									if (img.sx < 0)
+										img.sx = img.width - img.sWidth;
+								}
+							}
 						}
-						if (img.animDirection === 'vertical') {
-							img.sy += img.sHeight;
+						if (img.animDirection === 'top2bottom' || img.animDirection === 'bottom2top') {
+							img.sy += img.sHeight * img.direction;
 	 
-							if (img.sy >= img.height)
-								img.sy = 0;
+							if (img.alternate) {
+								if (img.sy <= 0 || img.sy + img.sHeight >= img.height)
+									img.direction *= -1;
+							}
+							else {
+								if (img.animDirection === 'top2bottom') {
+									if (img.sy >= img.height)
+										img.sy = 0;
+								}
+								else if (img.animDirection === 'bottom2top') {
+									if (img.sy < 0)
+										img.sy = img.height - img.sHeight;
+								}
+							}
 						}
 					}
 				}
