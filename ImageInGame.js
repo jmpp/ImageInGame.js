@@ -53,32 +53,13 @@ function ImageInGame()
 			var a = this.assets[i],
 				filename, sx, sy, sWidth, sHeight, animDirection;
 
-			filename 		= 'object' === typeof a ? a.filename : a;
-			sx 				= parseInt(a.sx) > 0 ? a.sx : 0;
-			sy 				= parseInt(a.sy) > 0 ? a.sy : 0;
-			sWidth 			= parseInt(a.sWidth) > 0 ? a.sWidth : 0;
-			sHeight 		= parseInt(a.sHeight) > 0 ? a.sHeight : 0;
-			animDirection 	= a.animDirection || null;
-			animByFrame 	= parseInt(a.animByFrame) > 0 ? a.animByFrame : 10;
-
-			/*if ('object' === typeof a) {
-				filename = a.filename;
-				sx = parseInt(a.sx) > 0 ? a.sx : 0;
-				sy = parseInt(a.sy) > 0 ? a.sy : 0;
-				sWidth = parseInt(a.sWidth) > 0 ? a.sWidth : 0;
-				sHeight = parseInt(a.sHeight) > 0 ? a.sHeight : 0;
-				animDirection = a.animDirection;
-				animByFrame = parseInt(a.animByFrame) > 0 ? a.animByFrame : 10;
-			}
-			else {
-				filename = a;
-				sx = 0;
-				sy = 0;
-				sWidth = 0;
-				sHeight = 0;
-				animDirection = null;
-				animByFrame = null;
-			}*/
+			filename = 'object' === typeof a ? a.filename : a;
+			sx = parseInt(a.sx) > 0 ? a.sx : 0;
+			sy = parseInt(a.sy) > 0 ? a.sy : 0;
+			sWidth = parseInt(a.sWidth) > 0 ? a.sWidth : 0;
+			sHeight = parseInt(a.sHeight) > 0 ? a.sHeight : 0;
+			animDirection = a.animDirection || null;
+			animByFrame = parseInt(a.animByFrame) > 0 ? a.animByFrame : 10;
 			
 			// Creating a new image resource for this sprite
 			var imageEl = new Image();
@@ -94,16 +75,16 @@ function ImageInGame()
 
 			this.images[ label ] =
 			{
-				data 			: imageEl,
-				width 			: 0, // Currently empty because the image isn't fully loaded
-				height 			: 0, // Currently empty because the image isn't fully loaded
-				sx 				: sx,
-				sy 				: sy,
-				sWidth 			: sWidth,
-				sHeight 		: sHeight,
-				animDirection 	: animDirection,
-				animByFrame 	: animByFrame,
-				frameCount 		: 0
+				data : imageEl,
+				width : 0, // Currently empty because the image isn't fully loaded
+				height : 0, // Currently empty because the image isn't fully loaded
+				sx : sx,
+				sy : sy,
+				sWidth : sWidth,
+				sHeight : sHeight,
+				animDirection : animDirection,
+				animByFrame : animByFrame,
+				frameCount : 0
 			};
 
 		}
@@ -119,7 +100,7 @@ function ImageInGame()
 		var label = element.getAttribute('data-label');
 
 		// As this image is now loaded, we can fill its width & height
-		this.images[ label ].width 	= element.width;
+		this.images[ label ].width = element.width;
 		this.images[ label ].height = element.height;
 
 		// If sWidth and sHeight weren't specified, fill them with width & height
