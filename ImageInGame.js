@@ -60,7 +60,7 @@ function ImageInGame()
 			sHeight = parseInt(a.sHeight) > 0 ? a.sHeight : 0;
 			animDirection = (a.animDirection && (a.animDirection === 'right2left' || a.animDirection === 'top2bottom' || a.animDirection === 'bottom2top')) ? a.animDirection : 'left2right';
 			alternate = a.alternate || false;
-			animByFrame = parseInt(a.animByFrame) > 0 ? a.animByFrame : 10;
+			animByFrame = parseInt(a.animByFrame) > 0 ? a.animByFrame : 12;
 			
 			// Creating a new image resource for this sprite
 			var imageEl = new Image();
@@ -87,7 +87,8 @@ function ImageInGame()
 				alternate : alternate,
 				direction : (animDirection === 'right2left' || animDirection === 'bottom2top') ? -1 : 1, // multiplier (used to compute animation direction or alternation)
 				animByFrame : animByFrame,
-				frameCount : 0
+				frameCount : 0,
+				pauseAnimation : false
 			};
 
 		}
@@ -130,7 +131,7 @@ function ImageInGame()
 				
 				var img = this.images[i];
 				
-				if (img.animDirection !== null)
+				if (img.animDirection !== null && !img.pauseAnimation)
 				{
 					++img.frameCount;
 

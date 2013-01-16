@@ -12,7 +12,8 @@ Image In Game is a simple sprites and images management tool for HTML5 games.
 3. [Images loading](#3-images-loading)
 4. [Animation update](#4-animation-update)
 5. [Drawing images](#5-drawing-images)
-6. [Full example](#6-full-example)
+6. [Pausing animation](#6-pausing-animation)
+7. [Full example](#7-full-example)
 
 1. Getting started
 ---------------
@@ -62,7 +63,8 @@ IIG.add({
   sx : 48,
   sy : 64 * 2,
   animDirection : 'left2right',
-  alternate : true
+  alternate : true,
+  animByFrame : 10
 });
 ```
 
@@ -80,8 +82,10 @@ IIG.add({
   
   Note that if set to `true`, there will be 2 cases :
   
-  1. The alternation will be HORIZONTAL if you've previously defined `animDirection` to `'left2right'` or `'right2left'`.
-  2. The alternation will be VERTICAL if you've previously defined `animDirection` to `'top2bottom'` or `'bottom2top'`.
+    1. The alternation will be HORIZONTAL if you've previously defined `animDirection` to `'left2right'` or `'right2left'`.
+    2. The alternation will be VERTICAL if you've previously defined `animDirection` to `'top2bottom'` or `'bottom2top'`.
+
+* The `animByFrame` property is an integer which indicates at how many frames the animation must change. The higher this number is, the higher the animation is long. Its default value is **12**.
 
 **At this step, your sprite is ready to be used, but you need also to tell the librarie that it should update each state of the sprite.** Please refer to the section below : "Animation update"
 
@@ -157,7 +161,20 @@ Then you'll be able to write yourself something like :
 context.drawImage(bob.data, bob.sx, bob.sy, bob.sWidth, bob.sHeight, 400, 300, bob.sWidth, bob.sHeight)
 ```
 
-6. Full example
+6. Pausing animation
+---------------------
+
+If for some reasons you need to temporarly pause the animation, you can use this sprite property :
+
+```javascript
+var bob = IIG.get('img/bob');
+
+bob.pauseAnimation = true;
+```
+
+This purely pauses the animation. If you want to resume, just set back to `false`.
+
+7. Full example
 ------------------------
 
 You can browse and analyze this complete example to become familiar with the librarie. There is also an simple boilerplate project you can check in `./example-project/`
@@ -174,11 +191,11 @@ You can browse and analyze this complete example to become familiar with the lib
 	// Instanciate IIG
 	var IIG = new ImageInGame();
 
-	// Add some images/sprites
-	IIG.add('images/bomb.png');
-	IIG.add('images/gem.png');
+	// Add some images & sprites
+	IIG.add('img/bomb.png');
+	IIG.add('img/gem.png');
 	IIG.add({
-		filename :'images/bob.png',
+		filename :'img/bob.png',
 		sWidth : 48,
 		sHeight : 64,
 		sy : 64,
@@ -197,9 +214,9 @@ You can browse and analyze this complete example to become familiar with the lib
 		IIG.update();
 
 		// Getting our images ...
-		var bob = IIG.get('images/bob'),
-			gem = IIG.get('images/gem'),
-			bomb = IIG.get('images/bomb');
+		var bob = IIG.get('img/bob'),
+			gem = IIG.get('img/gem'),
+			bomb = IIG.get('img/bomb');
 
 		// ... and draw them
 		IIG.drawImage(ctx, bob, 100, 250);
