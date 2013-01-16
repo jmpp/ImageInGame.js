@@ -1,0 +1,224 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+
+	<title>ImageInGame</title>
+	<style>
+		canvas { width: 800px; height: 595px; }
+	</style>
+</head>
+<body>
+
+<h1>Bob</h1>
+<p>This is an example page to show as simple is the implementation of ImageInGame.js</p>
+<p>Move Bob with keyboard arrows : <span style="font-size: 2em">&uarr; &rarr; &darr; &larr;</span></p>
+<canvas id="canvas" width="800" height="595"></canvas>
+
+<script src="../ImageInGame.min.js"></script>
+<script>
+	
+	if (!window.requestAnimationFrame) {
+		window.requestAnimationFrame = (function() {
+			return window.webkitRequestAnimationFrame ||
+					window.mozRequestAnimationFrame ||
+					window.oRequestAnimationFrame ||
+					window.msRequestAnimationFrame ||
+					function (callback, element) {
+						window.setTimeout(callback, 1000/60);
+					};
+		})();
+	}
+
+	var canvas = document.getElementById('canvas'),
+		ctx = canvas.getContext('2d');
+
+	var IIG = new ImageInGame();
+
+	IIG.add(
+		{
+			filename : 'img/bob.png',
+			sWidth : 48,
+			sHeight : 64,
+			sx : 48,
+			sy : 64 * 2,
+			alternate : true,
+			animByFrame : 8
+		},
+		'img/gem.png',
+		'img/grass.png',
+		'img/tree.png'
+	);
+
+	IIG.loadAll(init);
+
+	/**
+	 * Initialization
+	 **/
+	var grasses = [], gems = [], trees = [], player;
+	function init() {
+
+		// Creating grass blocs
+		var grass = IIG.get('img/grass'),
+			nbX = Math.ceil(canvas.width / grass.width),
+			nbY = Math.ceil(canvas.height / (grass.height-24));
+		for (var i = 0; i < nbX; i++) {
+			for (var j = 0; j < nbY; j++) {
+				grasses.push({
+					image : grass,
+					x : i * grass.width,
+					y : j * (grass.height-24)
+				});
+			}
+		}
+
+		// Creating some trees
+		var tree = IIG.get('img/tree'),
+			nb = Math.ceil(3 + Math.random() * (7-3));
+		for (var i = 0; i < nb; i++) {
+			trees.push({
+				image : tree,
+				x : Math.random() * canvas.width,
+				y : Math.random() * canvas.height
+			});
+		}
+
+		// Creating some gems
+		var gem = IIG.get('img/gem'),
+			nb = Math.ceil(Math.random() * 4);
+		for (var i = 0; i < nb; i++) {
+			gems.push({
+				image : gem,
+				x : Math.random() * canvas.width,
+				y : Math.random() * canvas.height
+			});
+		}
+
+		// Creating player Bob
+		player = {
+			image : IIG.get('img/bob'),
+			x : canvas.width/2,
+			y : canvas.height/2,
+			width : 48,
+			height : 64,
+			speed : 3
+		};
+
+		// All is ready, let's run !
+		run();
+	}
+
+	/**
+	 * Animation
+	 **/
+	function animate() {
+
+		if (KEYBOARD.up) {
+			player.image.pauseAnimation = false;
+			player.image.sy = 0;
+			if (player.y > 0)
+				player.y -= player.speed;
+		}
+
+		if (KEYBOARD.bottom) {
+			player.image.pauseAnimation = false;
+			player.image.sy = player.image.sHeight * 2;
+			if (player.y + player.height < canvas.height)
+				player.y += player.speed;
+		}
+
+		if (KEYBOARD.right) {
+			player.image.pauseAnimation = false;
+			player.image.sy = player.image.sHeight;
+			if (player.x + player.width < canvas.width)
+				player.x += player.speed;
+		}
+
+		if (KEYBOARD.left) {
+			player.image.pauseAnimation = false;
+			player.image.sy = player.image.sHeight * 3;
+			if (player.x > 0)
+				player.x -= player.speed;
+		}
+
+		if (!KEYBOARD.up && !KEYBOARD.right && !KEYBOARD.bottom && !KEYBOARD.left) {
+			// If no key are pressed, the animation pauses because Bob stops moving.
+			player.image.pauseAnimation = true;
+			// Set manually 'sx' to middle state
+			player.image.sx = player.image.sWidth;
+		}
+	}
+
+	/**
+	 * Rendering
+	 **/
+	function render() {
+		ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+		// Grass blocs
+		for (var i = 0, c = grasses.length; i < c; i++) {
+			var g = grasses[i];
+			ctx.drawImage(g.image.data, g.x, g.y);
+		}
+
+		// Trees
+		for (var i = 0, c = trees.length; i < c; i++) {
+			var t = trees[i];
+			ctx.drawImage(t.image.data, t.x, t.y);
+		}
+
+		// Gems
+		for (var i = 0, c = gems.length; i < c; i++) {
+			var g = gems[i];
+			ctx.drawImage(g.image.data, g.x, g.y);
+		}
+
+		// Player Bob
+		IIG.drawImage(ctx, player.image, player.x, player.y);
+	}
+
+	/**
+	 * Game Loop
+	 **/
+
+	function run() {
+		animate();
+		render();
+
+		IIG.update();
+
+		requestAnimationFrame(run);
+	}
+
+	/**
+	 * Keyboard events
+	 **/
+
+	var KEYBOARD = {
+		up : false,
+		right : false,
+		bottom : false,
+		left : false
+	};
+
+	document.onkeydown = function(evt) {
+		KEYBOARD.up = evt.keyCode === 38 ? true : KEYBOARD.up;
+		KEYBOARD.right = evt.keyCode === 39 ? true : KEYBOARD.right;
+		KEYBOARD.bottom = evt.keyCode === 40 ? true : KEYBOARD.bottom;
+		KEYBOARD.left = evt.keyCode === 37 ? true : KEYBOARD.left;
+	}
+
+	document.onkeyup = function(evt) {
+		KEYBOARD.up = evt.keyCode === 38 ? false : KEYBOARD.up;
+		KEYBOARD.right = evt.keyCode === 39 ? false : KEYBOARD.right;
+		KEYBOARD.bottom = evt.keyCode === 40 ? false : KEYBOARD.bottom;
+		KEYBOARD.left = evt.keyCode === 37 ? false : KEYBOARD.left;
+	}
+
+</script>
+
+<p>&copy; jmpp / <a href="https://github.com/jmpp">github.com/jmpp</a> / <a href="https://twitter.com/_jmpp">twitter@_jmpp</a></p>
+
+
+</body>
+</html>
