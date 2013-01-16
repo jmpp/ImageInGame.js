@@ -5,14 +5,14 @@ Image In Game is a simple sprites and images management tool for HTML5 games.
 
 **Summary**
 
-1. [Getting started](#getting-started)
-2. [Add images](#add-images)
+1. [Getting started](#1-getting-started)
+2. [Add images](#2-add-images)
  * [Simple images](#simple-images)
  * [Sprites](#sprites)
-3. [Images loading](#images-loading)
-4. [Animation update](#animation-update)
-5. [Drawing images](#drawing-images)
-6. [Full example](#full-example)
+3. [Images loading](#3-images-loading)
+4. [Animation update](#4-animation-update)
+5. [Drawing images](#5-drawing-images)
+6. [Full example](#6-full-example)
 
 1. Getting started
 ---------------
@@ -23,7 +23,7 @@ In order to get started, include `ImageInGame.js` in your document and instancia
 var IIG = new ImageInGame();
 ```
 
-2 Add images
+2. Add images
 ---------------------
 
 ### Simple images
@@ -83,7 +83,7 @@ The `alternate` property is a boolean which defines if the animation should alte
   1. The alternation will be HORIZONTAL if you've previously defined `animDirection` to `'left2right'` or `'right2left'`.
   2. The alternation will be VERTICAL if you've previously defined `animDirection` to `'top2bottom'` or `'bottom2top'`.
 
-**At this step, your sprite is ready to be used, but you need also to tell the librarie that it should update each state of the sprite. ** Please refer to the section below : "Animation update"
+**At this step, your sprite is ready to be used, but you need also to tell the librarie that it should update each state of the sprite.** Please refer to the section below : "Animation update"
 
 3. Images loading
 --------------
@@ -205,7 +205,7 @@ You can browse and analyze this complete example to become familiar with the lib
 		IIG.drawImage(ctx, bob, 100, 250);
 		IIG.drawImage(ctx, gem, 160, 267);
 		IIG.drawImage(ctx, bomb, 215, 262);
-		IIG.drawImage(ctx, gem, 270, 267); // I can draw 'gem' twice if I need to
+		IIG.drawImage(ctx, gem, 270, 267); // I can draw 'gem' twice if I want to
 
 		requestAnimationFrame(run);
 	}
