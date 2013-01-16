@@ -38,14 +38,14 @@ function ImageInGame()
 	};
 
 	/**
-	 * void LOADALL (Object o)
+	 * void LOADALL (Function callback)
 	 * 	> Creates and loads all images elements.
-	 * 	> If o.callback is specified, this function will be called when all images are loaded
+	 * 	> If 'callback' is specified, this function will be called when all images are loaded
 	 **/
-	this.loadAll = function(o) {
+	this.loadAll = function(callback) {
 
-		if ('object' === typeof o && 'function' === typeof o.callback)
-			this.callback = o.callback;
+		if ('function' === typeof callback)
+			this.callback = callback;
 
 		var that = this;
 		for (var i = 0, c = this.assets.length; i < c; i++) {
