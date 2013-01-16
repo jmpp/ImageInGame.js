@@ -70,7 +70,7 @@ IIG.add({
 
 * `sWidth` and `sHeight` corresponds to the width and height of the canvas area which will be displayed. If not specified, they'll be automatically replaced with the whole image width and height.
 
-* `sx` and `sy` corresponds to the reference point of the canvas within the image. If not specified, they'll be automatically set to 0
+* `sx` and `sy` corresponds to the coordinates of the canvas within the image. If not specified, they'll be automatically set to 0
 
 * The `animDirection` property can take 4 values : `'left2right'` (by default), `'right2left'`, `'top2bottom'` and `'bottom2top'`. It will specify how the canvas will move within the animation.
 
@@ -82,8 +82,8 @@ IIG.add({
   
   Note that if set to `true`, there will be 2 cases :
   
-    1. The alternation will be HORIZONTAL if you've previously defined `animDirection` to `'left2right'` or `'right2left'`.
-    2. The alternation will be VERTICAL if you've previously defined `animDirection` to `'top2bottom'` or `'bottom2top'`.
+      1. The alternation will be HORIZONTAL if you've previously defined `animDirection` to `'left2right'` or `'right2left'`.
+      2. The alternation will be VERTICAL if you've previously defined `animDirection` to `'top2bottom'` or `'bottom2top'`.
 
 * The `animByFrame` property is an integer which indicates at how many frames the animation must change. The higher this number is, the higher the animation is long. Its default value is **12**.
 
