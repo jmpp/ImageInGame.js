@@ -66,17 +66,17 @@ IIG.add({
 });
 ```
 
-`sWidth` and `sHeight` corresponds to the width and height of the canvas area which will be displayed. If not specified, they'll be automatically replaced with the whole image width and height.
+* `sWidth` and `sHeight` corresponds to the width and height of the canvas area which will be displayed. If not specified, they'll be automatically replaced with the whole image width and height.
 
-`sx` and `sy` corresponds to the reference point of the canvas within the image. If not specified, they'll be automatically set to 0
+* `sx` and `sy` corresponds to the reference point of the canvas within the image. If not specified, they'll be automatically set to 0
 
-The `animDirection` property can take 4 values : `'left2right'` (by default), `'right2left'`, `'top2bottom'` and `'bottom2top'`. It will specify how the canvas will move within the animation.
+* The `animDirection` property can take 4 values : `'left2right'` (by default), `'right2left'`, `'top2bottom'` and `'bottom2top'`. It will specify how the canvas will move within the animation.
 
-The `alternate` property is a boolean which defines if the animation should alternate its direction when over :
+* The `alternate` property is a boolean which defines if the animation should alternate its direction when over :
   
-* ![non alternate](https://raw.github.com/jmpp/ImageInGame.js/master/bob_non_alternate.gif) `alternate : false` (default value)
+  ![non alternate](https://raw.github.com/jmpp/ImageInGame.js/master/bob_non_alternate.gif) `alternate : false` (default value)
   
-* ![alternate](https://raw.github.com/jmpp/ImageInGame.js/master/bob_alternate.gif) `alternate : true`
+  ![alternate](https://raw.github.com/jmpp/ImageInGame.js/master/bob_alternate.gif) `alternate : true`
   
   Note that if set to `true`, there will be 2 cases :
   
