@@ -1,4 +1,4 @@
-Image In Game (IIG.js) [revision 2]
+Image In Game (IIG.js) (revision 2)
 ==============
 
 Image In Game is a simple sprites and images management tool for HTML5 games.
