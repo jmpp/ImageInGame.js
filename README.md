@@ -10,6 +10,7 @@ Image In Game is a simple sprites and images management tool for HTML5 games.
 3. [Loading images](#3-loading-images)
 4. [Getting an image instance](#4-getting-an-image-instance)
 5. [Attaching an animation to a sprite](#5-attaching-an-animation-to-a-sprite)
+  5.1. [Animation parameters](#animation-parameters)
 6. [Animation update](#6-animation-update)
 7. [Drawing images](#7-drawing-images)
 8. [Pausing animation](#8-pausing-animation)
@@ -96,6 +97,7 @@ bob.animation = new IIG.Animation({
   iterations : 'infinite' // by default
 });
 ```
+### Animation parameters
 
 * `sWidth` and `sHeight` corresponds to the width and height of the canvas area which will be displayed. If not specified, they'll be set to 0
 
@@ -121,6 +123,26 @@ bob.animation = new IIG.Animation({
   if (bob.animationDestroyed) // If the finished animation has been destroyed ...
       bob = IM.killInstance(bob);
   ```
+
+There's two additionnal parameters which allow to control exactly where starts and ends the animation within the spritesheet.
+
+* The `startPoint` parameter defines where the animation start point is.
+* The `endPoint` parameter defines where the animation end point is.
+
+![breakpoints](https://raw.github.com/jmpp/ImageInGame.js/master/bob_break_points.png)
+```javascript
+bob.animation = new IIG.Animation({
+  sWidth : 48,
+  sHeight : 64,
+  animDirection : 'ttb', // want to animate from top to bottom
+  startPoint : 64, // 'startPoint' is set at 64 pixels from the offset top of the spritesheet
+  endPoint : 64*3, // 'endPoint' is set at 64*3 pixels from the offset top of the spritesheet
+});
+```
+
+With this, you'll get an animation which will start at 64 pixels and will end at 192 pixels from the offset top of the spritesheet. Of course, if the `animDirection` is set to `'ltr'` or `'rtl'`, the startPoint and endPoint will be from offset left of the sheet.
+
+******************************************
 
 **At this step, your sprite is ready to be used, but you need also to tell the librarie that it should update each state of the sprite.** Please refer to the next section "Animation update"
 
