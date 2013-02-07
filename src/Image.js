@@ -11,6 +11,9 @@ IIG.Image = function(o) {
 		this.width = o.width;
 		this.height = o.height;
 		this.animation = o.animation;
+		this.pauseAnimation = (o.animation instanceof IIG.Animation) ? o.animation.pauseAnimation : false;
+		this.animationDestroyed = false;
+		// this._warned = false;
 	}
 
 }

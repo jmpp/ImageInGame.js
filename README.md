@@ -1,4 +1,4 @@
-Image In Game (IIG.js) (revision 2)
+Image In Game (IIG.js)
 ==============
 
 Image In Game is a simple sprites and images management tool for HTML5 games.
@@ -83,16 +83,17 @@ Each state of Bob is in a canvas of 48 x 64 pixels. We'll start with the "down" 
 Knowing these informations, you will create an animation by this way :
 
 ```javascript
-var bob = IM.getInstance('img/bob'); // considering that 'img/bob.png' is loaded
+var bob = IM.getInstance('img/bob'); // assuming 'img/bob.png' is loaded
 
 bob.animation = new IIG.Animation({
   sWidth : 48,
   sHeight : 64,
   sx : 48,
   sy : 64 * 2,
-  animDirection : 'left2right',
+  animDirection : 'ltr', // by default
   alternate : true,
-  animByFrame : 7
+  animByFrame : 7,
+  iterations : 'infinite' // by default
 });
 ```
 
@@ -100,7 +101,7 @@ bob.animation = new IIG.Animation({
 
 * `sx` and `sy` corresponds to the coordinates of the canvas within the image. If not specified, they'll be set to 0
 
-* The `animDirection` property can take 4 values : `'left2right'` (by default), `'right2left'`, `'top2bottom'` and `'bottom2top'`. It will specify how the canvas will move within the animation.
+* The `animDirection` property can take 4 values : `'ltr'` (left to right, by default), `'rtl'` (right to left), `'ttb'` (top to bottom) and `'btt'` (bottom to top). It will specify how the canvas will move within the animation.
 
 * The `alternate` property is a boolean which defines if the animation should alternate its direction when over :
   
@@ -110,10 +111,16 @@ bob.animation = new IIG.Animation({
   
   Note that if set to `true`, there will be 2 cases :
   
-  1. The alternation will be HORIZONTAL if you've previously defined `animDirection` to `'left2right'` or `'right2left'`.
-  2. The alternation will be VERTICAL if you've previously defined `animDirection` to `'top2bottom'` or `'bottom2top'`.
+  1. The alternation will be HORIZONTAL if you've previously defined `animDirection` to `'ltr'` or `'rtl'`.
+  2. The alternation will be VERTICAL if you've previously defined `animDirection` to `'ttb'` or `'btt'`.
 
 * The `animByFrame` property is an integer which indicates at how many frames the animation must change. The higher this number is, the higher the animation is long. Its default value is **12**.
+
+* The `iterations` property can take `'infinite'` (its default value) or a positive integer which defines how many times the animation will be played before get destroyed. **You can know when it's destroyed by reading the `'animationDestroyed'` parameter on your instance.**
+  ```javascript
+  if (bob.animationDestroyed) // If the finished animation has been destroyed ...
+      bob = IM.killInstance(bob);
+  ```
 
 **At this step, your sprite is ready to be used, but you need also to tell the librarie that it should update each state of the sprite.** Please refer to the next section "Animation update"
 
@@ -178,7 +185,7 @@ If for some reasons you need to temporarly pause the animation, you can use this
 ```javascript
 var bob = IM.getInstance('img/bob');
 
-bob.pauseAnimation = true;
+bob.animation.pauseAnimation = true; // assuming an animation is attached to this 'bob'
 ```
 
 This purely pauses the animation. If you want to resume, just set back to `false`.
@@ -250,21 +257,28 @@ You can browse and analyze this complete example to become familiar with the lib
 		run();
 	}
 
-	// This is our game loop
-	function run() {
-		ctx.clearRect(0, 0, 800, 600);
+    // This is our game loop
+    function run(t) {
+        ctx.clearRect(0, 0, 800, 600);
 
-		// Updating
-		IM.update();
+        // Updating
+        IM.update();
 
-		// ... and draw them
-		IM.drawImage(ctx, BOB, 100, 250);
-		IM.drawImage(ctx, GEM, 160, 267);
-		IM.drawImage(ctx, BOMB, 215, 262);
-		IM.drawImage(ctx, GEM, 270, 267); // I can draw 'gem' twice if I want to
+        // ... and draw them (if they're defined)
+        if (BOB)	IM.drawImage(ctx, BOB, 100, 250);
+        if (GEM)	IM.drawImage(ctx, GEM, 160, 267);
+        if (BOMB)	IM.drawImage(ctx, BOMB, 215, 262);
+        if (GEM)	IM.drawImage(ctx, GEM, 270, 267); // I can draw 'gem' twice if I want to
 
-		requestAnimationFrame(run);
-	}
+        // Delete elements after 5 seconds ...
+        if (t > 5000) {
+        	BOB = IM.killInstance(BOB);
+        	GEM = IM.killInstance(GEM);
+        	BOMB = IM.killInstance(BOMB);
+        }
+
+        requestAnimationFrame(run);
+    }
 
 </script>
 ```
