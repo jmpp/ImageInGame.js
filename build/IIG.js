@@ -6,6 +6,10 @@
 
 var IIG = IIG || {};
 
+/**
+ * @author : twitter@_jmpp / http://jmpp.fr
+ **/
+
 IIG.ImageManager = function() {
 
 	this._filenames = [];
@@ -64,9 +68,16 @@ IIG.ImageManager.prototype = {
 	killInstance : function(inst) {
 
 		// Killing the instance copied in the local property
-		for (var i = 0, c = this._spritesInstances.length; i < c; i++)
-			if (this._spritesInstances[i] === inst)
-				this._spritesInstances.splice(i, 1);
+		for (var i = 0, c = this._spritesInstances.length; i < c; i++) {
+			if (this._spritesInstances[i] !== inst)
+				continue;
+
+			// Updates the possible instances which wouldn't be linked with this destruction
+			this._spritesInstances[i].isDestroyed = true;
+
+			delete this._spritesInstances[i].animation;
+			this._spritesInstances.splice(i, 1);
+		}
 
 		if (inst instanceof IIG.Image) {
 			// Ensure this is killing the instance
@@ -141,60 +152,115 @@ IIG.ImageManager.prototype = {
 	 **/
 	update : function() {
 
-		for (var i = 0, c = this._spritesInstances.length; i < c; i++) {
-			if (this._spritesInstances[i] instanceof IIG.Image) {
-				
-				var sp = this._spritesInstances[i];
-				
-				if (sp.animation instanceof IIG.Animation && !sp.animation.pauseAnimation)
-				{
-					var spa = sp.animation;
+		var sp, spa, posReset = false, startPoint, endPoint;
+		for (var i = 0, c = this._spritesInstances.length; i < c; i++)
+		{
+			if (!this._spritesInstances[i] instanceof IIG.Image)
+				continue;
+			
+			sp = this._spritesInstances[i];
+			
+			if ( !(sp.animation instanceof IIG.Animation && (!sp.animation.pauseAnimation || !sp.pauseAnimation)) )
+				continue;
 
-					++spa.frameCount;
+			if (sp.animationDestroyed) // In-case its would have been re-activated
+				sp.animationDestroyed = false;
 
-					if (spa.frameCount >= spa.animByFrame) {
-						spa.frameCount = 0;
+			spa = sp.animation;
 
-						if (spa.animDirection === 'left2right' || spa.animDirection === 'right2left') { // horizontal
-							spa.sx += spa.sWidth * spa.animDirectionMultiplier;
+			++spa.frameCount;
 
-							if (spa.alternate) {
-								if (spa.sx <= 0 || spa.sx + spa.sWidth >= sp.width)
-									spa.animDirectionMultiplier *= -1;
-							}
-							else {
-								if (spa.animDirection === 'left2right') {
-									if (spa.sx >= sp.width)
-										spa.sx = 0;
-								}
-								else if (spa.animDirection === 'right2left') {
-									if (spa.sx < 0)
-										spa.sx = sp.width - spa.sWidth;
-								}
-							}
+			// Updating only if frameCount is > to the predefined animation frame
+			if (spa.frameCount < spa.animByFrame)
+				continue;
+
+			spa.frameCount = 0;
+
+			// Avoid the problem of not showing the last state of the sprite when alternate is set to 'true'
+			if (spa._resetAtNextState) {
+				posReset = true;
+				spa._resetAtNextState = false;
+			}
+
+			// HORIZONTAL animation (ltr and rtl)
+			if (spa.animDirection === 'ltr' || spa.animDirection === 'rtl') {
+
+				// If start point and/or end point have been defined ...
+				startPoint = spa.startPoint || 0;
+				endPoint = spa.endPoint || sp.width;
+
+				// Moving sx
+				spa.sx += spa.sWidth * spa._animDirectionMultiplier;
+
+				// If 'alternate' is 'true', we'll only *-1 the multiplier to make 'sx' changes direction
+				if (spa.alternate) {
+					if (spa.sx <= startPoint || spa.sx + spa.sWidth >= endPoint) {
+						spa._animDirectionMultiplier *= -1;
+						spa._resetAtNextState = true;
+					}
+				}
+				else {
+					if (spa.animDirection === 'ltr') {
+						if (spa.sx >= endPoint) {
+							spa.sx = startPoint;
+							posReset = true;
 						}
-						else if (spa.animDirection === 'top2bottom' || spa.animDirection === 'bottom2top') { // vertical
-							spa.sy += spa.sHeight * spa.animDirectionMultiplier;
-
-							if (spa.alternate) {
-								if (spa.sy <= 0 || spa.sy + spa.sHeight >= sp.height)
-									spa.animDirectionMultiplier *= -1;
-							}
-							else {
-								if (spa.animDirection === 'top2bottom') {
-									if (spa.sy >= sp.height)
-										spa.sy = 0;
-								}
-								else if (spa.animDirection === 'bottom2top') {
-									if (spa.sy < 0)
-										spa.sy = sp.height - spa.sHeight;
-								}
-							}
+					}
+					else if (spa.animDirection === 'rtl') {
+						if (spa.sx < startPoint) {
+							spa.sx = endPoint - spa.sWidth;
+							posReset = true;
 						}
 					}
 				}
-					
 			}
+			// VERTICAL animation (ttb and btt)
+			else if (spa.animDirection === 'ttb' || spa.animDirection === 'btt') {
+				
+				// If start point and/or end point have been defined ...
+				startPoint = spa.startPoint || 0;
+				endPoint = spa.endPoint || sp.height;
+
+				// Moving sy
+				spa.sy += spa.sHeight * spa._animDirectionMultiplier;
+
+				// If 'alternate' is 'true', we'll only *-1 the multiplier to make 'sx' changes direction
+				if (spa.alternate) {
+					if (spa.sy <= startPoint || spa.sy + spa.sHeight >= endPoint) {
+						spa._animDirectionMultiplier *= -1;
+						spa._resetAtNextState = true;
+					}
+				}
+				else {
+					if (spa.animDirection === 'ttb') {
+						if (spa.sy >= endPoint) {
+							spa.sy = startPoint;
+							posReset = true;
+						}
+					}
+					else if (spa.animDirection === 'btt') {
+						if (spa.sy < startPoint) {
+							spa.sy = endPoint - spa.sHeight;
+							posReset = true;
+						}
+					}
+				}
+			}
+
+			// It's time to check if max iterations has been reached, and if so, destroy the instance...
+			if (posReset) {
+				if ('number' === typeof spa.iterations) {
+					if (++spa._iterationsCount >= spa.iterations) {
+						//sp = this.killInstance( this._spritesInstances[i] );
+						this._spritesInstances[i].animation = spa = undefined;
+						this._spritesInstances[i].animationDestroyed = true;
+					}
+				}
+
+				posReset = false;
+			}
+		
+		
 		}
 
 	},
@@ -214,6 +280,10 @@ IIG.ImageManager.prototype = {
 
 };
 
+/**
+ * @author : twitter@_jmpp / http://jmpp.fr
+ **/
+
 IIG.Animation = function(o) {
 
 	this.frameCount = 0;
@@ -222,11 +292,16 @@ IIG.Animation = function(o) {
 	this.sy = 0;
 	this.sWidth = 0;
 	this.sHeight = 0;
-	this.animDirection = 'left2right'; // default direction is left to right
-	this.animDirectionMultiplier = 1; // default is 1 : forward
+	this.animDirection = 'ltr'; // default direction is left to right
+	this._animDirectionMultiplier = 1; // default is 1 : forward
 	this.alternate = false;
 	this.animByFrame = 12; // default 12
 	this.pauseAnimation = false;
+	this.iterations = 'infinite'; // number of iterations (infinite by default)
+	this._iterationsCount = 0;
+	this._resetAtNextState = false;
+	this.startPoint = 0;
+	this.endPoint = 0;
 
 	// Fill animation properties with options
 	if ('object' === typeof o)
@@ -235,13 +310,42 @@ IIG.Animation = function(o) {
 		this.sy = parseInt(o.sy) > 0 ? o.sy : this.sy;
 		this.sWidth = parseInt(o.sWidth) > 0 ? o.sWidth : this.sWidth;
 		this.sHeight = parseInt(o.sHeight) > 0 ? o.sHeight : this.sHeight;
-		this.animDirection = (o.animDirection && (o.animDirection === 'right2left' || o.animDirection === 'top2bottom' || o.animDirection === 'bottom2top')) ? o.animDirection : this.animDirection;
-		this.animDirectionMultiplier = (o.animDirection && (o.animDirection === 'right2left' || o.animDirection === 'bottom2top')) ? -1 : 1;
+		if (o.animDirection)
+		{
+			// Handling old versions values 'left2right', 'right2left', 'top2bottom' and 'bottom2top'
+			if (o.animDirection === 'right2left' || o.animDirection === 'left2right' || o.animDirection === 'top2bottom' || o.animDirection === 'bottom2top')
+				console.warn('`ImageInGame` - Value \''+ o.animDirection +'\' is deprecated. Use instead \'rtl\', \'ltr\', \'ttb\' or \'btt\'');
+			o.animDirection = (o.animDirection === 'right2left') ? 'rtl' : o.animDirection;
+			o.animDirection = (o.animDirection === 'left2right') ? 'ltr' : o.animDirection;
+			o.animDirection = (o.animDirection === 'top2bottom') ? 'ttb' : o.animDirection;
+			o.animDirection = (o.animDirection === 'bottom2top') ? 'btt' : o.animDirection;
+
+			if (o.animDirection === 'rtl' || o.animDirection === 'ltr' || o.animDirection === 'ttb' || o.animDirection === 'btt')
+				this.animDirection = o.animDirection;
+
+			this._animDirectionMultiplier = (o.animDirection === 'rtl' || o.animDirection === 'btt') ? -1 : 1;
+		}
 		this.alternate = o.alternate || this.alternate;
 		this.animByFrame = parseInt(o.animByFrame) > 0 ? o.animByFrame : this.animByFrame;
+		this.pauseAnimation = o.pauseAnimation || this.pauseAnimation;
+		this.iterations = o.iterations || this.iterations;
+		this.startPoint = o.startPoint || 0;
+		this.endPoint = o.endPoint || 0;
+
+		// Avoid the animation to firstly start at 0 if a start point is defined
+		if (this.startPoint > 0) {
+			if (this.animDirection === 'ltr' || this.animDirection === 'rtl')
+				this.sx = this.startPoint;
+			else if (this.animDirection === 'ttb' || this.animDirection === 'btt')
+				this.sy = this.startPoint
+		}
 	}
 
 }
+
+/**
+ * @author : twitter@_jmpp / http://jmpp.fr
+ **/
 
 IIG.Image = function(o) {
 
@@ -252,9 +356,16 @@ IIG.Image = function(o) {
 		this.width = o.width;
 		this.height = o.height;
 		this.animation = o.animation;
+		this.pauseAnimation = (o.animation instanceof IIG.Animation) ? o.animation.pauseAnimation : false;
+		this.animationDestroyed = false;
+		// this._warned = false;
 	}
 
 }
+
+/**
+ * @author : twitter@_jmpp / http://jmpp.fr
+ **/
 
 IIG.Utils = {
 
