@@ -75,7 +75,9 @@ IIG.ImageManager.prototype = {
 			// Updates the possible instances which wouldn't be linked with this destruction
 			this._spritesInstances[i].isDestroyed = true;
 
-			delete this._spritesInstances[i].animation;
+			if (this._spritesInstances[i].animation)
+				delete this._spritesInstances[i].animation;
+			
 			this._spritesInstances.splice(i, 1);
 		}
 
