@@ -120,7 +120,7 @@ bob.animation = new IIG.Animation({
 
 * The `iterations` property can take `'infinite'` (its default value) or a positive integer which defines how many times the animation will be played before get destroyed. **You can know when it's destroyed by reading the `'animationDestroyed'` parameter on your instance.**
   ```javascript
-  if (bob.animationDestroyed) // If the finished animation has been destroyed ...
+  if (bob && bob.animationDestroyed) // If the finished animation has been destroyed ...
       bob = IM.killInstance(bob);
   ```
 

@@ -79,6 +79,7 @@ IIG.ImageManager.prototype = {
 				delete this._spritesInstances[i].animation;
 			
 			this._spritesInstances.splice(i, 1);
+			c--;
 		}
 
 		if (inst instanceof IIG.Image) {
