@@ -155,7 +155,7 @@ IIG.ImageManager.prototype = {
 			
 			sp = this._spritesInstances[i];
 			
-			if ( !(sp.animation instanceof IIG.Animation && (!sp.animation.pauseAnimation || !sp.pauseAnimation)) )
+			if ( !(sp.animation instanceof IIG.Animation) || (sp.animation.pauseAnimation || sp.pauseAnimation) )
 				continue;
 
 			if (sp.animationDestroyed) // In-case its would have been re-activated

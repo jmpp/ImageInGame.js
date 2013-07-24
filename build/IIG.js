@@ -4,9 +4,7 @@
  * @revision : 2
  **/
 
-var IIG = IIG || {};
-
-/**
+var IIG = IIG || {};/**
  * @author : twitter@_jmpp / http://jmpp.fr
  **/
 
@@ -114,7 +112,7 @@ IIG.ImageManager.prototype = {
 			};
 
 			// Getting the whole file path + name without the extension
-			var label = /^(.*)\.(png|gif|jpg)$/ig.exec(filename)[1];
+			var label = /^(.*).(png|gif|jpg)$/ig.exec(filename)[1];
 			// Saves the element's "label" into a data attribute
 			imageEl.setAttribute('data-label', label);
 
@@ -163,7 +161,7 @@ IIG.ImageManager.prototype = {
 			
 			sp = this._spritesInstances[i];
 			
-			if ( !(sp.animation instanceof IIG.Animation && (!sp.animation.pauseAnimation || !sp.pauseAnimation)) )
+			if ( !(sp.animation instanceof IIG.Animation) || (sp.animation.pauseAnimation || sp.pauseAnimation) )
 				continue;
 
 			if (sp.animationDestroyed) // In-case its would have been re-activated
@@ -281,9 +279,7 @@ IIG.ImageManager.prototype = {
 
 	}
 
-};
-
-/**
+};/**
  * @author : twitter@_jmpp / http://jmpp.fr
  **/
 
@@ -317,7 +313,7 @@ IIG.Animation = function(o) {
 		{
 			// Handling old versions values 'left2right', 'right2left', 'top2bottom' and 'bottom2top'
 			if (o.animDirection === 'right2left' || o.animDirection === 'left2right' || o.animDirection === 'top2bottom' || o.animDirection === 'bottom2top')
-				console.warn('`ImageInGame` - Value \''+ o.animDirection +'\' is deprecated. Use instead \'rtl\', \'ltr\', \'ttb\' or \'btt\'');
+				console.warn('`ImageInGame` - Value ''+ o.animDirection +'' is deprecated. Use instead 'rtl', 'ltr', 'ttb' or 'btt'');
 			o.animDirection = (o.animDirection === 'right2left') ? 'rtl' : o.animDirection;
 			o.animDirection = (o.animDirection === 'left2right') ? 'ltr' : o.animDirection;
 			o.animDirection = (o.animDirection === 'top2bottom') ? 'ttb' : o.animDirection;
@@ -345,7 +341,6 @@ IIG.Animation = function(o) {
 	}
 
 }
-
 /**
  * @author : twitter@_jmpp / http://jmpp.fr
  **/
@@ -364,9 +359,7 @@ IIG.Image = function(o) {
 		// this._warned = false;
 	}
 
-}
-
-/**
+}/**
  * @author : twitter@_jmpp / http://jmpp.fr
  **/
 
