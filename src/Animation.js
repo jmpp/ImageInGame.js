@@ -32,7 +32,7 @@ IIG.Animation = function(o) {
 		{
 			// Handling old versions values 'left2right', 'right2left', 'top2bottom' and 'bottom2top'
 			if (o.animDirection === 'right2left' || o.animDirection === 'left2right' || o.animDirection === 'top2bottom' || o.animDirection === 'bottom2top')
-				console.warn('`ImageInGame` - Value \''+ o.animDirection +'\' is deprecated. Use instead \'rtl\', \'ltr\', \'ttb\' or \'btt\'');
+				console.warn("`ImageInGame` - Value '"+ o.animDirection +"' is deprecated. Use instead 'rtl', 'ltr', 'ttb' or 'btt'");
 			o.animDirection = (o.animDirection === 'right2left') ? 'rtl' : o.animDirection;
 			o.animDirection = (o.animDirection === 'left2right') ? 'ltr' : o.animDirection;
 			o.animDirection = (o.animDirection === 'top2bottom') ? 'ttb' : o.animDirection;
