@@ -32,10 +32,8 @@ var IM = new IIG.ImageManager();
 With the Manager, you can add one or several files at once depending on your needs :
 
 ```javascript
-IM.add('img/player.png');
-IM.add('img/wall.png');
-// OR ...
-IM.add('img/player.png', 'img/wall.png' /*...*/ );
+IM.add('player', 'img/player.png')
+  .add('wall', img/wall.png');
 ```
 
 3. Loading images
@@ -47,11 +45,17 @@ Before using your images or bind them to an animation, you'll have to load them 
 
 ```javascript
 IIG.loadAll(function() {
-  // do something ...
+  // All images are loaded ...
 });
 ```
 
 If you do not want to use a callback, you can refer to this property : `IIG.ImageManager.imagesLoaded`. It is `false` by default, and will be set to `true` once all the images are loaded.
+
+```javascript
+if (IM.imagesLoaded) {
+  // All images are loaded ...
+}
+```
 
 4. Getting an image instance
 --------------
@@ -59,9 +63,9 @@ If you do not want to use a callback, you can refer to this property : `IIG.Imag
 Once your images are loaded, then you can get an instance of each one by using `IIG.ImageManager.getInstance()`
 
 ```javascript
-var player = IM.getInstance('img/player'); // Getting the asset by its name (without the extension)
+var player = IM.getInstance('player'); // Getting the asset by its name
 
-// var 'player' is an object :
+// var 'player' is now an object :
 player.data; // image resource which can be drawn with context.drawImage()
 player.width; // image width
 player.height; // image height
@@ -84,17 +88,17 @@ Each state of Bob is in a canvas of 48 x 64 pixels. We'll start with the "down" 
 Knowing these informations, you will create an animation by this way :
 
 ```javascript
-var bob = IM.getInstance('img/bob'); // assuming 'img/bob.png' is loaded
+var bob = IM.getInstance('bob'); // assuming you've added 'img/bob.png' previously
 
 bob.animation = new IIG.Animation({
   sWidth : 48,
   sHeight : 64,
   sx : 48,
   sy : 64 * 2,
-  animDirection : 'ltr', // by default
+  animDirection : 'ltr', // default
   alternate : true,
-  animByFrame : 7,
-  iterations : 'infinite' // by default
+  fps : 5, // default
+  iterations : 'infinite' // default
 });
 ```
 ### Animation parameters
@@ -116,7 +120,7 @@ bob.animation = new IIG.Animation({
   1. The alternation will be HORIZONTAL if you've previously defined `animDirection` to `'ltr'` or `'rtl'`.
   2. The alternation will be VERTICAL if you've previously defined `animDirection` to `'ttb'` or `'btt'`.
 
-* The `animByFrame` property is an integer which indicates at how many frames the animation must change. The higher this number is, the higher the animation is long. Its default value is **12**.
+* The `fps` property is an integer which indicates at how many frames per seconds the animation will run (this assume your game runs at 60fps). Default value is **5**fps.
 
 * The `iterations` property can take `'infinite'` (its default value) or a positive integer which defines how many times the animation will be played before get destroyed. **You can know when it's destroyed by reading the `'animationDestroyed'` parameter on your instance.**
   ```javascript
@@ -174,8 +178,8 @@ function run() {
   
   IM.update();
 
-  var bob = IM.getInstance('img/bob');
-  IM.drawImage(context, bob, 400, 300); // Draws the animated Bob guy at 400x300, using the canvas context
+  var bob = IM.getInstance('bob');
+  IM.drawImage(context, bob, 400, 300); // Draws the animated Bob guy at 400x300, using the canvas 2D context
   
   requestAnimationFrame(run);
 }
@@ -184,7 +188,7 @@ function run() {
 If for some reasons you prefer to use the native HTML5 `context.drawImage`, just use the instance properties :
 
 ```javascript
-var bob = IM.getInstance('img/bob');
+var bob = IM.getInstance('bob');
 
 context.drawImage(
   bob.data, // image resource
@@ -205,7 +209,7 @@ context.drawImage(
 If for some reasons you need to temporarly pause the animation, you can use this sprite property :
 
 ```javascript
-var bob = IM.getInstance('img/bob');
+var bob = IM.getInstance('bob');
 
 bob.animation.pauseAnimation = true; // assuming an animation is attached to this 'bob'
 ```
@@ -220,7 +224,7 @@ Sometimes you'll have to destroy an instance of an image you've previously creat
 In order not to overload the JS garbage collector, you MUST imperatively destroy an instance this way :
 
 ```javascript
-var enemy = IM.getInstance('img/enemy');
+var enemy = IM.getInstance('enemy');
 
 // ...
 
@@ -250,10 +254,9 @@ You can browse and analyze this complete example to become familiar with the lib
 	var IM = new IIG.ImageManager();
 
 	// Add some images & sprites
-	IM.add(
-	  'img/bomb.png',
-	  'img/gem.png',
-	  'img/bob.png'
+	IM.add('bomb', 'img/bomb.png')
+	  .add('gem', 'img/gem.png')
+	  .add('bob', 'img/bob.png');
 	);
 
 	// Load images and indicate the 'init' function as callback
@@ -263,9 +266,9 @@ You can browse and analyze this complete example to become familiar with the lib
 	function init() {
 
 		// getting instances
-		BOMB = IM.getInstance('img/bomb');
-		GEM = IM.getInstance('img/gem');
-		BOB = IM.getInstance('img/bob');
+		BOMB = IM.getInstance('bomb');
+		GEM = IM.getInstance('gem');
+		BOB = IM.getInstance('bob');
 
 		// binding an animation for the Bob guy
 		BOB.animation = new IIG.Animation({
