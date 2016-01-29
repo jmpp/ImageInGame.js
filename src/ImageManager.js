@@ -22,13 +22,11 @@ IIG.ImageManager.prototype = {
 	 * void ADD (String element1 [, String element2 [, String element3 [, ...]]])
 	 * 	> Simply pushes one or several sprites in a local property
 	 **/
-	add : function() {
+	add : function(label, path) {
 
-		if (arguments.length === 1)
-			this._filenames.push(arguments[0]);
-		else if (arguments.length > 1)
-			for (var i = 0, c = arguments.length; i < c; i++)
-				this._filenames.push(arguments[i]);
+		this._filenames.push({label:label, path:path});
+
+		return this; // For chaining
 
 	},
 
@@ -97,20 +95,18 @@ IIG.ImageManager.prototype = {
 
 		var that = this;
 		for (var i = 0, c = this._filenames.length; i < c; i++) {
-			var filename = this._filenames[i];
+			var file = this._filenames[i];
 			// Creating a new image resource for this sprite
 			var imageEl = new Image();
-			imageEl.src = filename;
 			imageEl.onload = function() {
 				that.loaded(this);
 			};
+			imageEl.src = file.path;
 
-			// Getting the whole file path + name without the extension
-			var label = /^(.*)\.(png|gif|jpg)$/ig.exec(filename)[1];
 			// Saves the element's "label" into a data attribute
-			imageEl.setAttribute('data-label', label);
+			imageEl.setAttribute('data-label', file.label);
 
-			this._sprites[ label ] =
+			this._sprites[ file.label ] =
 			{
 				// width & height empty until image is loaded
 				data : imageEl,
@@ -166,7 +162,7 @@ IIG.ImageManager.prototype = {
 			++spa.frameCount;
 
 			// Updating only if frameCount is > to the predefined animation frame
-			if (spa.frameCount < spa.animByFrame)
+			if (spa.frameCount < 60/spa.fps)
 				continue;
 
 			spa.frameCount = 0;
@@ -266,10 +262,10 @@ IIG.ImageManager.prototype = {
 	 **/
 	drawImage : function(context, sprite, x, y) {
 
-		if (sprite.animation instanceof IIG.Animation)
-			return context.drawImage(sprite.data, sprite.animation.sx, sprite.animation.sy, sprite.animation.sWidth, sprite.animation.sHeight, x, y, sprite.animation.sWidth, sprite.animation.sHeight);
-		else
+		if (!(sprite.animation instanceof IIG.Animation))
 			return context.drawImage(sprite.data, x, y);
+		
+		context.drawImage(sprite.data, sprite.animation.sx, sprite.animation.sy, sprite.animation.sWidth, sprite.animation.sHeight, x, y, sprite.animation.sWidth, sprite.animation.sHeight);
 
 	}
 

@@ -13,7 +13,7 @@ IIG.Animation = function(o) {
 	this.animDirection = 'ltr'; // default direction is left to right
 	this._animDirectionMultiplier = 1; // default is 1 : forward
 	this.alternate = false;
-	this.animByFrame = 12; // default 12
+	this.fps = 5; // default 5
 	this.pauseAnimation = false;
 	this.iterations = 'infinite'; // number of iterations (infinite by default)
 	this._iterationsCount = 0;
@@ -24,10 +24,10 @@ IIG.Animation = function(o) {
 	// Fill animation properties with options
 	if ('object' === typeof o)
 	{
-		this.sx = parseInt(o.sx) > 0 ? o.sx : this.sx;
-		this.sy = parseInt(o.sy) > 0 ? o.sy : this.sy;
-		this.sWidth = parseInt(o.sWidth) > 0 ? o.sWidth : this.sWidth;
-		this.sHeight = parseInt(o.sHeight) > 0 ? o.sHeight : this.sHeight;
+		this.sx = parseInt(o.sx, 10) > 0 ? o.sx : this.sx;
+		this.sy = parseInt(o.sy, 10) > 0 ? o.sy : this.sy;
+		this.sWidth = parseInt(o.sWidth, 10) > 0 ? o.sWidth : this.sWidth;
+		this.sHeight = parseInt(o.sHeight, 10) > 0 ? o.sHeight : this.sHeight;
 		if (o.animDirection)
 		{
 			// Handling old versions values 'left2right', 'right2left', 'top2bottom' and 'bottom2top'
@@ -44,7 +44,7 @@ IIG.Animation = function(o) {
 			this._animDirectionMultiplier = (o.animDirection === 'rtl' || o.animDirection === 'btt') ? -1 : 1;
 		}
 		this.alternate = o.alternate || this.alternate;
-		this.animByFrame = parseInt(o.animByFrame) > 0 ? o.animByFrame : this.animByFrame;
+		this.fps = parseInt(o.fps, 10) > 0 ? o.fps : this.fps;
 		this.pauseAnimation = o.pauseAnimation || this.pauseAnimation;
 		this.iterations = o.iterations || this.iterations;
 		this.startPoint = o.startPoint || 0;
