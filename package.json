@@ -2,6 +2,7 @@
   "name": "image-in-game.js",
   "version": "1.0.1",
   "description": "Simple Canvas2d spritesheet animation lib",
+  "main": "build/IIG.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
