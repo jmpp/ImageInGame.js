@@ -257,7 +257,6 @@ You can browse and analyze this complete example to become familiar with the lib
 	IM.add('bomb', 'img/bomb.png')
 	  .add('gem', 'img/gem.png')
 	  .add('bob', 'img/bob.png');
-	);
 
 	// Load images and indicate the 'init' function as callback
 	IM.loadAll(init);
