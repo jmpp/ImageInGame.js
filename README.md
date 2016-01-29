@@ -95,10 +95,10 @@ bob.animation = new IIG.Animation({
   sHeight : 64,
   sx : 48,
   sy : 64 * 2,
-  animDirection : 'ltr', // default
-  alternate : true,
-  fps : 5, // default
-  iterations : 'infinite' // default
+  animDirection : 'ltr', // 'left to right' (default)
+  alternate : false, // (default)
+  fps : 5, // (default)
+  iterations : 'infinite' // (default)
 });
 ```
 ### Animation parameters
